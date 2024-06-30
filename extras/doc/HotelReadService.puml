@@ -1,0 +1,45 @@
+@startuml HotelReadService
+
+skinparam classAttributeIconSize 0
+
+package org.springframework.stereotype {
+    interface Service
+}
+
+package java.util {
+    interface List<T>
+    interface Map<K,V>
+    class UUID
+
+    UUID .left[hidden].> Service
+}
+
+package com.acme.hotel {
+    package entity {
+        class Hotel << entity >>
+
+        Hotel .up[hidden].> List
+    }
+
+    package repository {
+        class HotelRepository << control >> << @Repository >>
+    }
+
+    package service #e8bcf0 {
+        class HotelReadService << control >> << @Service >> {
+            + findById(id: UUID): Hotel
+            + find(queryParams: Map<String, String>): List<Hotel>
+        }
+
+        HotelReadService o--> HotelRepository : repo
+        HotelReadService ..> Hotel
+        HotelReadService ..> Service
+        HotelReadService ..> UUID
+        HotelReadService ..> List
+        HotelReadService ..> Map
+    }
+}
+
+hide empty members
+
+@enduml

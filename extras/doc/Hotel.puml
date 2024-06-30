@@ -1,0 +1,35 @@
+@startuml Hotel
+'https://plantuml.com/class-diagram
+
+package java {
+  package util{
+    class UUID
+  }
+}
+
+  package com.acme.hotel.entity #e8bcf0 {
+    class Zimmer {
+      zimmernummer : integer
+      istBelegt : boolean
+      anzahlBetten : integer
+    }
+
+    class Adresse {
+      plz : String
+      ort : String
+    }
+
+    class Hotel << entity >> {
+      id : UUID
+      hotelname : String
+    }
+}
+
+Hotel *--> "1..n" Adresse : adresse
+Hotel *--> "1..n"  Zimmer : vorhandeneZimmer
+
+Hotel ..> UUID
+
+hide empty members
+
+@enduml

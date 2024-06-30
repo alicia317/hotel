@@ -1,0 +1,77 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+package org.springframework {
+    package web.bind.annotation {
+        interface "@RestController" as RestController
+        interface "@RequestMapping" as RequestMapping
+        interface "@PathVariable" as PathVariable
+        interface "@RequestParam" as RequestParam
+        interface "@ExceptionHandler" as ExceptionHandler
+        interface "@ResponseStatus" as ResponseStatus
+    }
+
+    package http {
+        class ResponseEntity<T>
+    }
+    package hateoas {
+        class CollectionModel<E>
+    }
+    package util {
+        class MultiValueMap<K,V>
+    }
+}
+
+package jakarta.servlet.http {
+    interface HttpServletRequest
+}
+
+package java.util {
+    class UUID
+    UUID .up[hidden].> HttpServletRequest
+}
+
+package com.acme.hotel {
+  package service {
+    class HotelReadService << control >>
+    class NotFoundException
+  }
+
+  package controller #e8bcf0 {
+    class HotelModel <<entity>>
+
+    class HotelGetController << boundary >> << @RequestController >> << @RequestMapping >> {
+            + @GetMapping getById(@PathVariable id: UUID, request: HttpServletRequest): HotelModel
+            + @GetMapping get(@RequestParam queryParams: MultiValueMap<String, String>, request: HttpServletRequest): CollectionModel<HotelModel>
+    }
+
+    class CommonExceptionHandler << @ControllerAdvice >> {
+      + @ExceptionHandler @ResponseStatus onNotFound(ex: NotFoundException)
+    }
+
+    HotelGetController o--> "1" HotelReadService : service
+    HotelGetController ..> HotelModel
+
+    HotelGetController .up.> RestController
+    HotelGetController .up.> RequestMapping
+    HotelGetController .up.> PathVariable
+    HotelGetController .up.> RequestParam
+    HotelGetController .up.> ResponseEntity
+    HotelGetController .up.> MultiValueMap
+    HotelGetController .up.> CollectionModel
+    HotelGetController .right.> HttpServletRequest
+
+    CommonExceptionHandler .up.> ExceptionHandler
+    CommonExceptionHandler .up.> ResponseStatus
+    CommonExceptionHandler ..> NotFoundException
+
+    HotelGetController .right.> UUID
+
+    HotelModel ..> HotelReadService
+  }
+}
+
+hide empty members
+
+@enduml

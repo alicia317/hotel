@@ -1,0 +1,77 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+package org.springframework {
+  package stereotype {
+    interface "@Controller" as Controller
+  }
+
+  package web.bind.annotation {
+    interface "@RequestMapping" as RequestMapping
+    interface "@PathVariable" as PathVariable
+    interface "@RequestBody" as RequestBody
+    interface "@ExceptionHandler" as ExceptionHandler
+  }
+
+  package http {
+    class ResponseEntity<T>
+    class ProblemDetail
+
+    package converter {
+      class HttpMessageNotReadableException
+    }
+  }
+}
+
+package jakarta.servlet.http {
+    interface HttpServletRequest
+}
+
+package java.util {
+    interface Collection<T>
+    class UUID
+}
+
+package com.acme.hotel {
+  package service {
+    class HotelWriteService << control >> << @Service >>
+
+    class ConstraintViolationsException
+  }
+
+  package controller #e8bcf0 {
+
+    class HotelDTO <<entity>>
+
+
+    class HotelWriteController << boundary >> << @Controller >> << @RequestMapping >> {
+    + @PostMapping post(@RequestBody HotelDTO: HotelDTO, request: HttpServletRequest): ResponseEntity<Void>
+    + @PutMapping put(@PathVariable id: UUID, @RequestBody HotelDTO: KundeDTO)
+    + @ExceptionHandler onConstraintViolations(ex: ConstraintViolationsException, req: HttpServletRequest): ResponseEntity<ProblemDetail>
+    + @ExceptionHandler onMessageNotReadable(ex: HttpMessageNotReadableException, req: HttpServletRequest): ResponseEntity<ProblemDetail>
+    }
+
+    HotelWriteController o--> "1" HotelWriteService : service
+    HotelWriteController ..> HotelDTO
+    HotelWriteController ..> ConstraintViolationsException
+
+    HotelWriteController .up.> ResponseEntity
+    HotelWriteController .up.> ProblemDetail
+    HotelWriteController .up.> HttpMessageNotReadableException
+    HotelWriteController .up.> HttpServletRequest
+
+    HotelWriteController .up.> Controller
+    HotelWriteController ..> RequestMapping
+    HotelWriteController ..> PathVariable
+    HotelWriteController ..> RequestBody
+    HotelWriteController ..> ExceptionHandler
+
+    HotelWriteController ..> UUID
+    HotelWriteController ..> Collection
+  }
+}
+
+hide empty members
+
+@enduml

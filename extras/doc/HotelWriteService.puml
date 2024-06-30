@@ -1,0 +1,37 @@
+@startuml HotelWriteService
+
+skinparam classAttributeIconSize 0
+
+package org.springframework.stereotype {
+    interface Service
+}
+
+package java.util {
+    class UUID
+}
+
+package com.acme.hotel {
+    package entity {
+        class Hotel << entity >>
+    }
+
+    package repository {
+        class HotelRepository << control >> << @Repository >>
+    }
+
+    package service #e8bcf0 {
+        class HotelWriteService << control >> << @Service >> {
+            + create(hotel: Hotel): Hotel
+            + update(hotel: Hotel, id: UUID)
+        }
+
+        HotelWriteService o--> "1" HotelRepository : repo
+        HotelWriteService ..> Hotel
+        HotelWriteService ..> Service
+        HotelWriteService ..> UUID
+    }
+}
+
+hide empty members
+
+@enduml

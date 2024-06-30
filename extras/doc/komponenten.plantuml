@@ -1,0 +1,25 @@
+@startuml Komponenten
+
+left to right direction
+
+package com.acme.hotel #DDDDDD {
+    package rest <<boundary>> #e8bcf0 {
+        [@RestController\nHotelReadController] as HotelReadController
+    }
+
+    package service <<control>> #e8bcf0 {
+        [@Service\nHotelReadService] as HotelReadService
+    }
+
+    package entity <<entity>> #e8bcf0 {
+        [Hotel]
+    }
+}
+
+RESTClient ~~> [HotelReadController]
+
+[HotelReadController] o--> [HotelReadService]
+[HotelReadController] .up.> [Hotel]
+[HotelReadService] ..> [Hotel]
+
+@enduml

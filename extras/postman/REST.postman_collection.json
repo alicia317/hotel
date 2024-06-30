@@ -1,0 +1,1865 @@
+{
+  "info": {
+    "name": "REST",
+    "description": "REST-Schnittstelle",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Security",
+      "item": [
+        {
+          "name": "/users/me",
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "clientId",
+                  "value": "spring-client",
+                  "type": "string"
+                },
+                {
+                  "key": "clientSecret",
+                  "value": "SqVQTDy0BMJWxxRo8vuxbVmweWaX2FAe",
+                  "type": "string"
+                },
+                {
+                  "key": "accessTokenUrl",
+                  "value": "http://localhost:8880/realms/spring/protocol/openid-connect/token",
+                  "type": "string"
+                },
+                {
+                  "key": "authUrl",
+                  "value": "http://localhost:8880/realms/spring/protocol/openid-connect/auth",
+                  "type": "string"
+                },
+                {
+                  "key": "redirect_uri",
+                  "value": "https://oauth.pstmn.io/v1/callback",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{auth_url}}/me",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.be.equal('application/json');\r",
+                  "});\r",
+                  "pm.test('access_token', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body.access_token).to.be.a('string').that.is.not.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{client_secret}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "spring-client",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"p\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{auth_url}}/login",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login admin Bearer",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{client_secret}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "spring-client",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "p",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8880/realms/spring/protocol/openid-connect/token",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8880",
+              "path": [
+                "realms",
+                "spring",
+                "protocol",
+                "openid-connect",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login admin mit falschem Passwort",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 401', () => {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{client_secret}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "spring-client",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"FALSCHES PASSWORT\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{auth_url}}/login",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login admin mit falschem Benutzernamen",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 401', () => {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{client_secret}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "spring-client",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"FALSCHER_BENUTZERNAME\",\r\n    \"password\": \"p\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{auth_url}}/login",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Suche mit ID",
+      "item": [
+        {
+          "name": "Vorhandene ID 00000000-0000-0000-0000-000000000001",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000001"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vorhandene ID 0...1 Bearer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.be.equal('application/json');\r",
+                  "});\r",
+                  "pm.test('ID im Self-Link', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body._links.self.href).to.be.a('string').that.matches(/\\/rest\\/00000000-0000-0000-0000-000000000001$/u);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const host = 'localhost';\r",
+                  "const port = '8880';\r",
+                  "const clientId = pm.environment.get('client_id');\r",
+                  "const clientSecret = pm.environment.get('client_secret');\r",
+                  "const btoaFn = require('btoa');\r",
+                  "const encoded = btoaFn(`${clientId}:${clientSecret}`);\r",
+                  "\r",
+                  "pm.sendRequest({\r",
+                  "    url: `http://${host}:${port}/realms/spring/protocol/openid-connect/token`,\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+                  "        Authorization: `Basic ${encoded}`,\r",
+                  "    },\r",
+                  "    body: 'grant_type=password&username=admin&password=p',\r",
+                  "}, (err, res) => {\r",
+                  "    pm.collectionVariables.set('TOKEN', res.json().access_token);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000001",
+                  "description": "Hotel ID"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vorhandene ID 0...01 mit If-None-Match",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 304', () => {\r",
+                  "    pm.response.to.have.status(304);\r",
+                  "});\r",
+                  "pm.test('Leerer Body', () => {\r",
+                  "    const body = pm.response.text();\r",
+                  "    pm.expect(body).to.be.an('string').that.is.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "If-None-Match",
+                "value": "\"0\"",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000001",
+                  "description": "Hotel ID"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vorhandene ID 0...01 mit falscher Versionsnummer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.be.equal('application/json');\r",
+                  "});\r",
+                  "pm.test('ID im Self-Link', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body._links.self.href).to.be.a('string').that.matches(/\\/rest\\/00000000-0000-0000-0000-000000000001$/u);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "If-None-Match",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000001",
+                  "description": "Hotel ID"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Nicht-vorhandene ID 99999999-9999-9999-9999-999999999999",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "99999999-9999-9999-9999-999999999999",
+                  "description": "Hotel ID"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ohne Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 401', () => {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000001",
+                  "description": "Hotel ID"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vorhandene ID 0...01 als USER",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.be.equal('application/json');\r",
+                  "});\r",
+                  "pm.test('ID im Self-Link', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    pm.expect(body._links.self.href).to.be.a('string').that.matches(/\\/rest\\/00000000-0000-0000-0000-000000000001$/u);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "clientSecret",
+                  "value": "{{client_secret}}",
+                  "type": "string"
+                },
+                {
+                  "key": "clientId",
+                  "value": "{{client_id}}",
+                  "type": "string"
+                },
+                {
+                  "key": "accessTokenUrl",
+                  "value": "http://localhost:8880/realms/spring/protocol/openid-connect/token",
+                  "type": "string"
+                },
+                {
+                  "key": "authUrl",
+                  "value": "http://localhost:8880/realms/spring/protocol/openid-connect/auth",
+                  "type": "string"
+                },
+                {
+                  "key": "redirect_uri",
+                  "value": "https://oauth.pstmn.io/v1/callback",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000001",
+                  "description": "Hotel ID"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vorhandene ID 0...00 mit fehlenden Rechten",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 403', () => {\r",
+                  "    pm.response.to.have.status(403);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "clientSecret",
+                  "value": "{{client_secret}}",
+                  "type": "string"
+                },
+                {
+                  "key": "clientId",
+                  "value": "{{client_id}}",
+                  "type": "string"
+                },
+                {
+                  "key": "accessTokenUrl",
+                  "value": "http://localhost:8880/realms/spring/protocol/openid-connect/token",
+                  "type": "string"
+                },
+                {
+                  "key": "authUrl",
+                  "value": "http://localhost:8880/realms/spring/protocol/openid-connect/auth",
+                  "type": "string"
+                },
+                {
+                  "key": "redirect_uri",
+                  "value": "https://oauth.pstmn.io/v1/callback",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000",
+                  "description": "Hotel ID"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Über die REST-Schnittstelle nach Hotels anhand der ID suchen.",
+      "auth": {
+        "type": "oauth2",
+        "oauth2": [
+          {
+            "key": "clientSecret",
+            "value": "{{client_secret}}",
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "value": "{{client_id}}",
+            "type": "string"
+          },
+          {
+            "key": "accessTokenUrl",
+            "value": "http://localhost:8880/realms/spring/protocol/openid-connect/token",
+            "type": "string"
+          },
+          {
+            "key": "authUrl",
+            "value": "http://localhost:8880/realms/spring/protocol/openid-connect/auth",
+            "type": "string"
+          },
+          {
+            "key": "refreshRequestParams",
+            "value": [],
+            "type": "any"
+          },
+          {
+            "key": "tokenRequestParams",
+            "value": [],
+            "type": "any"
+          },
+          {
+            "key": "authRequestParams",
+            "value": [],
+            "type": "any"
+          },
+          {
+            "key": "challengeAlgorithm",
+            "value": "S256",
+            "type": "string"
+          },
+          {
+            "key": "redirect_uri",
+            "value": "https://oauth.pstmn.io/v1/callback",
+            "type": "string"
+          },
+          {
+            "key": "grant_type",
+            "value": "authorization_code",
+            "type": "string"
+          },
+          {
+            "key": "addTokenTo",
+            "value": "header",
+            "type": "string"
+          },
+          {
+            "key": "client_authentication",
+            "value": "header",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Suche mit Suchkriterien",
+      "item": [
+        {
+          "name": "Alle",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}",
+              "host": [
+                "{{rest_url}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Alle mit fehlenden Rechten",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 403', () => {\r",
+                  "    pm.response.to.have.status(403);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "clientSecret",
+                  "value": "{{client_secret}}",
+                  "type": "string"
+                },
+                {
+                  "key": "clientId",
+                  "value": "{{client_id}}",
+                  "type": "string"
+                },
+                {
+                  "key": "accessTokenUrl",
+                  "value": "http://localhost:8880/realms/spring/protocol/openid-connect/token",
+                  "type": "string"
+                },
+                {
+                  "key": "authUrl",
+                  "value": "http://localhost:8880/realms/spring/protocol/openid-connect/auth",
+                  "type": "string"
+                },
+                {
+                  "key": "redirect_uri",
+                  "value": "https://oauth.pstmn.io/v1/callback",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}",
+              "host": [
+                "{{rest_url}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Teilstring \"i\" des Hotelnamens",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?hotelname=i",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "query": [
+                {
+                  "key": "hotelname",
+                  "value": "i"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vorhandener Hotelname",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?hotelname=Alpha",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "query": [
+                {
+                  "key": "hotelname",
+                  "value": "Alpha"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Nicht-vorhandener Teilstring des Hotelnamens",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "accept": true
+            }
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{rest_url}}?hotelname=Zeta",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "query": [
+                {
+                  "key": "hotelname",
+                  "value": "Zeta"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Über die REST-Schnittstelle nach Hotels mit Suchkriterien suchen.",
+      "auth": {
+        "type": "oauth2",
+        "oauth2": [
+          {
+            "key": "refreshRequestParams",
+            "value": [],
+            "type": "any"
+          },
+          {
+            "key": "tokenRequestParams",
+            "value": [],
+            "type": "any"
+          },
+          {
+            "key": "authRequestParams",
+            "value": [],
+            "type": "any"
+          },
+          {
+            "key": "challengeAlgorithm",
+            "value": "S256",
+            "type": "string"
+          },
+          {
+            "key": "redirect_uri",
+            "value": "https://oauth.pstmn.io/v1/callback",
+            "type": "string"
+          },
+          {
+            "key": "grant_type",
+            "value": "authorization_code",
+            "type": "string"
+          },
+          {
+            "key": "clientSecret",
+            "value": "{{client_secret}}",
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "value": "{{client_id}}",
+            "type": "string"
+          },
+          {
+            "key": "authUrl",
+            "value": "http://localhost:8880/realms/spring/protocol/openid-connect/auth",
+            "type": "string"
+          },
+          {
+            "key": "addTokenTo",
+            "value": "header",
+            "type": "string"
+          },
+          {
+            "key": "client_authentication",
+            "value": "header",
+            "type": "string"
+          },
+          {
+            "key": "accessTokenUrl",
+            "value": "http://localhost:8880/realms/spring/protocol/openid-connect/token",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Neuanlegen",
+      "item": [
+        {
+          "name": "Neues Hotel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"hotelname\": \"Lavas\",\r\n      \"adresse\": {\r\n        \"plz\": \"76543\",\r\n        \"ort\": \"Örtchen\"\r\n    },\r\n    \"zimmer\": [{\r\n       \"zimmernummer\": 3,\r\n        \"istBelegt\": true,\r\n        \"anzahlBetten\": 3\r\n    }],\r\n    \"username\": \"testpost\",\n  \"password\": \"Pass123.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}",
+              "host": [
+                "{{rest_url}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Neues Hotel mit ungültigen Daten",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"hotelname\": \"?!$\",\r\n      \"adresse\": {\r\n        \"plz\": \"1235\",\r\n        \"ort\": \"Testort\"\r\n    },\r\n    \"zimmer\": [{\r\n      \"zimmernummer\": 0,\n       \"istBelegt\": true,\r\n        \"anzahlBetten\": 2\r\n    }],\r\n    \"username\": \"test\",\n  \"password\": \"Pass1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}",
+              "host": [
+                "{{rest_url}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Neues Hotel mit fehlerhaften Datentypen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"hotelname\": \"Leos Hotel\",\r\n      \"adresse\": {\r\n        \"plz\": 12356,\r\n        \"ort\": Karlsruhe\r\n    },\r\n    \"zimmer\": [{\r\n     \"zimmernummer\": 4.4,\n           \"istBelegt\": \"true\",\r\n        \"anzahlBetten\": \"4\"\r\n    }],\r\n     \"username\": \"testpost\",\n  \"password\": \"Pass123.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}",
+              "host": [
+                "{{rest_url}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Über die REST-Schnittstelle neue Hotels anlegen",
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{TOKEN}}",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ändern durch PUT",
+      "item": [
+        {
+          "name": "Hotel 30 ändern",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "\"0\"",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"hotelname\": \"Testput\",\r\n      \"adresse\": {\r\n        \"plz\": \"56789\",\r\n        \"ort\": \"Karlsruhe\"\r\n    },\r\n    \"zimmer\": [{\r\n       \"zimmernummer\": 16,\n      \"istBelegt\": true,\r\n        \"anzahlBetten\": 2\r\n    }],\r\n   \"username\": \"alpha3\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000030"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel 30 ohne Versionsnummer ändern",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 428', () => {\r",
+                  "    pm.response.to.have.status(428);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/problem+json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.equal('application/problem+json');\r",
+                  "});\r",
+                  "pm.test('Problem Details', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { status, title, detail, instance } = body;\r",
+                  "    pm.expect(status).to.be.equal(428);\r",
+                  "    pm.expect(title).to.be.equal('Precondition Required');\r",
+                  "    pm.expect(detail).to.be.a('string').that.includes('Versionsnummer');\r",
+                  "    pm.expect(instance).to.match(/rest\\/00000000-0000-0000-0000-000000000030$/u);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"hotelname\": \"Testput\",\r\n    \"adresse\": {\n        \"plz\": \"57890\",\n        \"ort\": \"Weingarten\"\n    },\n    \"zimmer\": [{\n       \"zimmernummer\": 15,\n      \"istBelegt\": true,\n        \"anzahlBetten\": 2\r\n    }],\r\n    \"username\": \"alpha3\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000030"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel 30 mit falscher Versionsnummer ändern",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 412', () => {\r",
+                  "    pm.response.to.have.status(412);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/problem+json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.equal('application/problem+json');\r",
+                  "});\r",
+                  "pm.test('Problem Details', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { status, title, detail, instance } = body;\r",
+                  "    pm.expect(status).to.be.equal(412);\r",
+                  "    pm.expect(title).to.be.equal('Precondition Failed');\r",
+                  "    pm.expect(detail).to.be.a('string').that.includes('ETag');\r",
+                  "    pm.expect(instance).to.match(/rest\\/00000000-0000-0000-0000-000000000030$/u);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "0",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"hotelname\": \"Testput\",\r\n    \"adresse\": {\n        \"plz\": \"56789\",\n        \"ort\": \"Karlsruhe\"\n    },\n    \"zimmer\": [{\n       \"zimmernummer\": 16,\n      \"istBelegt\": true,\n        \"anzahlBetten\": 2\r\n    }],\r\n     \"username\": \"alpha3\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000030"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel 30 mit alter Versionsnummer ändern",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 412', () => {\r",
+                  "    pm.response.to.have.status(412);\r",
+                  "});\r",
+                  "pm.test('Content-Type application/problem+json', () => {\r",
+                  "    const { response } = pm;\r",
+                  "    const contentType = response.headers.get('Content-Type');\r",
+                  "    pm.expect(contentType).to.equal('application/problem+json');;\r",
+                  "});\r",
+                  "pm.test('Problem Details', () => {\r",
+                  "    const body = pm.response.json();\r",
+                  "    const { status, title, detail, instance } = body;\r",
+                  "    pm.expect(status).to.be.equal(412);\r",
+                  "    pm.expect(title).to.be.equal('Precondition Failed');\r",
+                  "    pm.expect(detail).to.be.a('string').that.includes('Versionsnummer');\r",
+                  "    pm.expect(instance).to.match(/rest\\/00000000-0000-0000-0000-000000000030$/u);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "\"-1\"",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nachname\": \"Testput\",\r\n    \"adresse\": {\n        \"plz\": \"56789\",\n        \"ort\": \"Karlsruhe\"\n    },\n    \"zimmer\": [{\n       \"zimmernummer\": 16,\n      \"istBelegt\": true,\n        \"anzahlBetten\": 2\r\n    }],\r\n     \"username\": \"alpha3\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000030"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Nicht-vorhandenes Hotel ändern",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "\"0\"",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"hotelname\": \"?!$\",\r\n      \"adresse\": {\r\n        \"plz\": \"1234\",\r\n        \"ort\": \"Testort\"\r\n    },\r\n    \"zimmer\": [{\r\n      \"zimmernummer\": 2,\n      \"istBelegt\": true,\r\n        \"anzahlBetten\": 0\r\n    }],\r\n    \"username\": \"alpha3\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel 30 mit ungültigen Daten ändern",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "\"0\"",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"hotelname\": \"?!$\",\r\n      \"adresse\": {\r\n        \"plz\": \"1234\",\r\n        \"ort\": \"Testort\"\r\n    },\r\n    \"zimmer\": [{\r\n      \"zimmernummer\": 21,\n     \"istBelegt\": true,\r\n        \"anzahlBetten\": 0\r\n    },\r\n   \"username\": \"alpha3\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000030"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel 30 ohne Token ändern",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 401', () => {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "If-Match",
+                "value": "\"1\""
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"hotelname\": \"Testput\",\r\n   \"adresse\": {\n        \"plz\": \"56789\",\n        \"ort\": \"Karlsruhe\"\n    },\n    \"zimmer\": [{\n       \"zimmernummer\": 16,\n      \"istBelegt\": true,\n        \"anzahlBetten\": 2\n    }],\r\n   \"username\": \"alpha3\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rest_url}}/:id",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000030"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Über die REST-Schnittstelle vorhandene Hotels ändern",
+      "auth": {
+        "type": "oauth2",
+        "oauth2": [
+          {
+            "key": "refreshRequestParams",
+            "value": [],
+            "type": "any"
+          },
+          {
+            "key": "tokenRequestParams",
+            "value": [],
+            "type": "any"
+          },
+          {
+            "key": "authRequestParams",
+            "value": [],
+            "type": "any"
+          },
+          {
+            "key": "challengeAlgorithm",
+            "value": "S256",
+            "type": "string"
+          },
+          {
+            "key": "redirect_uri",
+            "value": "https://oauth.pstmn.io/v1/callback",
+            "type": "string"
+          },
+          {
+            "key": "grant_type",
+            "value": "authorization_code",
+            "type": "string"
+          },
+          {
+            "key": "clientSecret",
+            "value": "{{client_secret}}",
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "value": "{{client_id}}",
+            "type": "string"
+          },
+          {
+            "key": "authUrl",
+            "value": "http://localhost:8880/realms/spring/protocol/openid-connect/auth",
+            "type": "string"
+          },
+          {
+            "key": "addTokenTo",
+            "value": "header",
+            "type": "string"
+          },
+          {
+            "key": "client_authentication",
+            "value": "header",
+            "type": "string"
+          },
+          {
+            "key": "accessTokenUrl",
+            "value": "http://localhost:8880/realms/spring/protocol/openid-connect/token",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Options",
+      "item": [
+        {
+          "name": "Options /rest",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Allow im Response-Header', () => {\r",
+                  "    const allowHeader = pm.response.headers.get('Allow');;\r",
+                  "    pm.expect(allowHeader).to.be.a('string').that.is.not.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "OPTIONS",
+            "header": [],
+            "url": {
+              "raw": "{{rest_url}}",
+              "host": [
+                "{{rest_url}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Options /rest/00000000-0000-0000-0000-000000000000 Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Statuscode 200', () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test('Allow im Response-Header', () => {\r",
+                  "    const allowHeader = pm.response.headers.get('Allow');;\r",
+                  "    pm.expect(allowHeader).to.be.a('string').that.is.not.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "OPTIONS",
+            "header": [],
+            "url": {
+              "raw": "{{rest_url}}/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{rest_url}}"
+              ],
+              "path": [
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "rest_url",
+      "value": "{{base_url}}/rest",
+      "type": "string"
+    },
+    {
+      "key": "rest_url_http",
+      "value": "{{base_url_http}}/rest",
+      "type": "string"
+    },
+    {
+      "key": "rest_url_ingress",
+      "value": "{{base_url_ingress}}/rest",
+      "type": "string"
+    },
+    {
+      "key": "auth_url",
+      "value": "{{base_url}}/auth",
+      "type": "string"
+    },
+    {
+      "key": "TOKEN",
+      "value": ""
+    }
+  ]
+}

@@ -1,0 +1,315 @@
+openapi: 3.0.1
+info:
+  title: Hotel API
+  version: v1
+servers:
+- url: https://localhost:8080
+  description: Generated server url
+paths:
+  /rest/{id}:
+    get:
+      tags:
+      - Suchen
+      summary: Suche mit der Hotel-ID
+      operationId: getById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "404":
+          description: Hotel nicht gefunden
+        "200":
+          description: Hotel gefunden
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/HotelModel'
+    put:
+      tags:
+      - Aktualisieren
+      summary: Ein Hotel mit neuen Werten aktualisieren
+      operationId: put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HotelDTO'
+        required: true
+      responses:
+        "404":
+          description: Hotel nicht vorhanden
+        "422":
+          description: Ungültige Werte oder Email vorhanden
+        "400":
+          description: Syntaktische Fehler im Request-Body
+        "204":
+          description: Aktualisiert
+    delete:
+      tags:
+      - Loeschen
+      summary: Ein Hotel anhand der ID loeschen
+      operationId: deleteById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "404":
+          description: Not Found
+        "204":
+          description: Gelöscht
+    patch:
+      tags:
+      - Aktualisieren
+      summary: Ein Hotel mit einzelnen neuen Werten aktualisieren
+      operationId: patch
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/PatchOperation'
+        required: true
+      responses:
+        "404":
+          description: Hotel nicht vorhanden
+        "422":
+          description: Constraints verletzt oder Email vorhanden
+        "400":
+          description: Syntaktische Fehler im Request-Body
+        "204":
+          description: Aktualisiert
+  /rest:
+    get:
+      tags:
+      - Suchen
+      summary: Suche mit Suchkriterien
+      operationId: get
+      parameters:
+      - name: suchkriterien
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/MultiValueMapStringString'
+      responses:
+        "404":
+          description: Kein Hotel gefunden
+        "200":
+          description: CollectionModel mid den Hotels
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/CollectionModelHotelModel'
+    post:
+      tags:
+      - Neuanlegen
+      summary: Ein neues Hotel anlegen
+      operationId: post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HotelDTO'
+        required: true
+      responses:
+        "404":
+          description: Not Found
+        "422":
+          description: Ungültige Werte oder Email vorhanden
+        "201":
+          description: Hotel neu angelegt
+        "400":
+          description: Syntaktische Fehler im Request-Body
+  /rest/nachname/{prefix}:
+    get:
+      tags:
+      - Suchen
+      summary: Suche Nachnamen mit Praefix
+      operationId: getNachnamenByPrefix
+      parameters:
+      - name: prefix
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "404":
+          description: Not Found
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  schemas:
+    AdresseDTO:
+      type: object
+      properties:
+        plz:
+          type: string
+        ort:
+          type: string
+    HotelDTO:
+      type: object
+      properties:
+        hotelname:
+          type: string
+        adresse:
+          $ref: '#/components/schemas/AdresseDTO'
+        vorhandeneZimmer:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZimmerDTO'
+    ZimmerDTO:
+      type: object
+      properties:
+        zimmernummer:
+          type: integer
+        istBelegt:
+          type: boolean
+        anzahlBetten:
+          type: integer
+          properties:
+            displayName:
+              type: string
+            symbol:
+              type: string
+            defaultFractionDigits:
+              type: integer
+              format: int32
+            numericCode:
+              type: integer
+              format: int32
+            numericCodeAsString:
+              type: string
+    PatchOperation:
+      type: object
+      properties:
+        op:
+          type: string
+          enum:
+          - replace
+          - add
+          - remove
+        path:
+          type: string
+        value:
+          type: string
+    MultiValueMapStringString:
+      type: object
+      properties:
+        all:
+          type: object
+          additionalProperties:
+            type: string
+          writeOnly: true
+        empty:
+          type: boolean
+      additionalProperties:
+        type: array
+        items:
+          type: string
+    Adresse:
+      required:
+      - ort
+      - plz
+      type: object
+      properties:
+        plz:
+          pattern: "^\\d{5}$"
+          type: string
+        ort:
+          type: string
+    CollectionModelHotelModel:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            hotels:
+              type: array
+              items:
+                $ref: '#/components/schemas/HotelModel'
+        _links:
+          $ref: '#/components/schemas/Links'
+    HotelModel:
+      type: object
+      properties:
+        hotelname:
+          type: string
+        adresse:
+          $ref: '#/components/schemas/Adresse'
+        vorhandeneZimmer:
+          type: array
+          items:
+            $ref: '#/components/schemas/Zimmer'
+        _links:
+          $ref: '#/components/schemas/Links'
+    Links:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Link'
+    Zimmer:
+      type: object
+      properties:
+        zimmernummer:
+          type: integer
+        istBelegt:
+          type: boolean
+        anzahlBetten:
+          type: integer
+          properties:
+            displayName:
+              type: string
+            symbol:
+              type: string
+            defaultFractionDigits:
+              type: integer
+              format: int32
+            numericCode:
+              type: integer
+              format: int32
+            numericCodeAsString:
+              type: string
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+        hreflang:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        deprecation:
+          type: string
+        profile:
+          type: string
+        name:
+          type: string
+        templated:
+          type: boolean

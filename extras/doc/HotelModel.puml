@@ -1,0 +1,34 @@
+@startuml Hotel
+
+skinparam classAttributeIconSize 0
+' skinparam monochrome true
+
+package org.springframework.hateos {
+  class RepresentationModel<T>
+}
+
+package com.acme.hotel {
+  package entity {
+    class Hotel
+    class Adresse
+    class Zimmer
+  }
+
+  package rest #e8bcf0 {
+    class HotelModel << entity >> {
+      hotelname : String
+
+      HotelModel(hotel: Hotel)
+    }
+
+    HotelModel *--> "1" Zimmer : zimmer
+    HotelModel *--> "1" Adresse : adresse
+
+    HotelModel -right-|> RepresentationModel
+    HotelModel ..> Hotel
+  }
+}
+
+hide empty members
+
+@enduml
